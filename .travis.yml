@@ -93,8 +93,9 @@ cache:
   - $HOME/.ccache
 matrix:
   fast_finish: true
+  include:
     - compiler: ": bitcoind"
       env: HOST=x86_64-unknown-linux-gnu PACKAGES="libtool bc python-zmq libboost-all-dev" PPA="ppa:chris-lea/zeromq" DEP_OPTS="NO_QT=1 NO_UPNP=1 DEBUG=1" RUN_TESTS=true GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports CPPFLAGS=-DDEBUG_LOCKORDER"  
 script:
-      - ./build.sh
-      - qa/pull-tester/rpc-tests.sh
+    - ./build.sh
+    - qa/pull-tester/rpc-tests.sh
