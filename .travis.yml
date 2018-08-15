@@ -73,58 +73,28 @@
 #     - if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then (echo "Upload goes here. Something like: scp -r $BASE_OUTDIR server" || echo "upload failed"); fi
 
 
-dist: trusty
+
 os: linux
-language: minimal
+language: cpp
+compiler: gcc
+env:
+  global:
+    - CCACHE_SIZE=100M
+    - CCACHE_TEMPDIR=/tmp/.ccache-temp
+    - CCACHE_COMPRESS=1
+    # - BASE_OUTDIR=$TRAVIS_BUILD_DIR/out
+    - SDK_URL=https://bitcoincore.org/depends-sources/sdks
+    - PYTHON_DEBUG=1
 cache:
   apt: true
   directories:
   - depends/built
   - depends/sdk-sources
   - $HOME/.ccache
-env:
-  global:
-    - MAKEJOBS=-j3
-    - RUN_TESTS=false
-    - BOOST_TEST_RANDOM=1$TRAVIS_BUILD_ID
-    - CCACHE_SIZE=100M
-    - CCACHE_TEMPDIR=/tmp/.ccache-temp
-    - CCACHE_COMPRESS=1
-    - BASE_OUTDIR=$TRAVIS_BUILD_DIR/out
-    - SDK_URL=https://bitcoincore.org/depends-sources/sdks
-    - PYTHON_DEBUG=1
-    - WINEDEBUG=fixme-all
 matrix:
-  # x86_64 Linux (uses qt5 dev package instead of depends Qt to speed up build and avoid timeout)
-    - HOST=x86_64-unknown-linux-gnu PACKAGES="python-zmq protobuf-compiler libdbus-1-dev libharfbuzz-dev libprotobuf-dev" DEP_OPTS="NO_UPNP=1 DEBUG=1 ALLOW_HOST_PACKAGES=1" RUN_TESTS=true GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports CPPFLAGS=-DDEBUG_LOCKORDER"
-# Qt4 & system libs
-    - HOST=x86_64-unknown-linux-gnu PACKAGES="python-zmq libssl1.0-dev libevent-dev bsdmainutils libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-program-options-dev libboost-test-dev libboost-thread-dev libdb5.3++-dev libminiupnpc-dev libzmq3-dev libprotobuf-dev protobuf-compiler libqrencode-dev xvfb" NO_DEPENDS=1 RUN_TESTS=true GOAL="install" BITCOIN_CONFIG="--enable-zmq --with-incompatible-bdb --enable-glibc-back-compat --enable-reduce-exports CPPFLAGS=-DDEBUG_LOCKORDER"
-install:
-    - env | grep -E '^(CCACHE_|WINEDEBUG|DISPLAY|BOOST_TEST_RANDOM|CONFIG_SHELL)' | tee /tmp/env
-    # - DOCKER_ID=$(docker run $DOCKER_ADMIN -idt --mount type=bind,src=$TRAVIS_BUILD_DIR,dst=$TRAVIS_BUILD_DIR --mount type=bind,src=$CCACHE_DIR,dst=$CCACHE_DIR -w $TRAVIS_BUILD_DIR --env-file /tmp/env ubuntu:18.04)
-    # - DOCKER_EXEC () { docker exec $DOCKER_ID bash -c "cd $PWD && $*"; }
-    - cd $PWD && $*
-    - travis_retry apt-get update
-    - travis_retry apt-get install --no-install-recommends --no-upgrade -qq
-before_script:
-    - mkdir -p depends/SDKs depends/sdk-sources
-    - if [ -z "$NO_DEPENDS" ]; then CONFIG_SHELL= make $MAKEJOBS -C depends HOST=$HOST $DEP_OPTS; fi   
-
+  fast_finish: true
+    - compiler: ": bitcoind"
+      env: HOST=x86_64-unknown-linux-gnu PACKAGES="libtool bc python-zmq libboost-all-dev" PPA="ppa:chris-lea/zeromq" DEP_OPTS="NO_QT=1 NO_UPNP=1 DEBUG=1" RUN_TESTS=true GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports CPPFLAGS=-DDEBUG_LOCKORDER"  
 script:
-    - export TRAVIS_COMMIT_LOG=`git log --format=fuller -1`
-    - OUTDIR=$BASE_OUTDIR/$TRAVIS_PULL_REQUEST/$TRAVIS_JOB_NUMBER-$HOST
-    - BITCOIN_CONFIG_ALL="--disable-dependency-tracking --prefix=$TRAVIS_BUILD_DIR/depends/$HOST --bindir=$OUTDIR/bin --libdir=$OUTDIR/lib"
-    - if [ -z "$NO_DEPENDS" ]; then ccache --max-size=$CCACHE_SIZE; fi
-    - test -n "$CONFIG_SHELL" && "$CONFIG_SHELL" -c "./autogen.sh" || ./autogen.sh
-    - mkdir build && cd build
-    - ../configure --cache-file=config.cache $BITCOIN_CONFIG_ALL $BITCOIN_CONFIG || ( cat config.log && false)
-    - make distdir VERSION=$HOST
-    - cd bitcoin-$HOST
-    - ./configure --cache-file=../config.cache $BITCOIN_CONFIG_ALL $BITCOIN_CONFIG || ( cat config.log && false)
-    - make $MAKEJOBS $GOAL || ( echo "Build failure. Verbose build follows." && make $GOAL V=1 ; false )
-    - if [ "$RUN_TESTS" = "true" ]; then LD_LIBRARY_PATH=$TRAVIS_BUILD_DIR/depends/$HOST/lib make $MAKEJOBS check VERBOSE=1; fi
-    - if [ "$TRAVIS_EVENT_TYPE" = "cron" ]; then extended="--extended --exclude feature_pruning,feature_dbcrash"; fi
-    - if [ "$RUN_TESTS" = "true" ]; then qa/pull-tester/rpc-tests.sh ${extended}; fi
-after_script:
-    - echo $TRAVIS_COMMIT_RANGE
-    - echo $TRAVIS_COMMIT_LOG
+      - ./build.sh
+      - qa/pull-tester/rpc-tests.sh
