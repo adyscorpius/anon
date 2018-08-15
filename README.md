@@ -1,3 +1,6 @@
+# Project is currently experimental and in TESTNET phase
+
+
 Anonymous Bitcoin
 ----------------
 
@@ -66,6 +69,8 @@ addnode=45.79.6.196
 addnode=66.228.52.134
 addnode=72.14.185.163
 addnode=198.58.124.152
+addnode=85.214.117.160
+addnode=85.214.206.237
 ```
 
 
@@ -170,6 +175,11 @@ If you plan to build for windows and linux at the same time, be sure to delete a
 
 Build the latest version of ANON using the instructions below, then follow the [testnet guide](doc/testnet.md)
 
+Please note the Tesnet is running on p2p port: 33127
+
+You should take the appropriate measures to open this port on your firewall to allow incoming/outgoing connections on this port. 
+
+
 About
 --------------
 
@@ -207,13 +217,13 @@ height and can be explicitly disabled.
 
 * Official Documentation will be released soon
 * Visit the Discord or Telegram servers for help and more information.
-     Discord: https://discord.gg/qtV6AY
+     Discord: https://discord.gg/ueQv8r
      Telgram: https://t.me/anonymousbitcoin
 
 ### Want to participate in development?
 
 * Code review is welcome!
-* If you want to get to know us join our Discord: https://discord.gg/qtV6AY
+* If you want to get to know us join our Discord: https://discord.gg/ueQv8r
 * We will be released a brief guide for joining the ANON testnet soon!
 
 
