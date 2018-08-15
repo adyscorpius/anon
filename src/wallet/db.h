@@ -18,7 +18,7 @@
 
 #include <boost/filesystem/path.hpp>
 
-// #include <db_cxx.h>
+#include <db_cxx.h>
 
 extern unsigned int nWalletDBUpdated;
 
