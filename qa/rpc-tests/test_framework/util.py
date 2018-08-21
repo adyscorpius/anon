@@ -167,7 +167,7 @@ def initialize_chain(test_dir):
                 print( "initialize_chain: anon-cli -rpcwait getblockcount completed")
         devnull.close()
         rpcs = []
-        for i in range(10):
+        for i in range(15):
             try:
                 url = "http://rt:rt@127.0.0.1:%d"%(rpc_port(i),)
                 rpcs.append(AuthServiceProxy(url))
@@ -194,13 +194,13 @@ def initialize_chain(test_dir):
         stop_nodes(rpcs)
         wait_bitcoinds()
         disable_mocktime()
-        for i in range(10):
+        for i in range(15):
             os.remove(log_filename("cache", i, "debug.log"))
             os.remove(log_filename("cache", i, "db.log"))
             os.remove(log_filename("cache", i, "peers.dat"))
             os.remove(log_filename("cache", i, "fee_estimates.dat"))
 
-    for i in range(10):
+    for i in range(15):
         from_dir = os.path.join("cache", "node"+str(i))
         to_dir = os.path.join(test_dir,  "node"+str(i))
         shutil.copytree(from_dir, to_dir)

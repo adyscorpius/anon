@@ -70,7 +70,9 @@ class MasternodeTest (BitcoinTestFramework):
     def setup_network(self, split=False):
         self.nodes = []
         self.nodes.append(start_node(0, self.options.tmpdir, ["-debug"]))
-        self.nodes[0].generate(150)
+        for i in range(0,150):
+            # set_mocktime(get_mocktime() + 1)
+            self.nodes[0].generate(1)
         self.prepare_masternodes()
         self.write_mn_config()
         stop_node(self.nodes[0], 0)
@@ -93,17 +95,12 @@ class MasternodeTest (BitcoinTestFramework):
             self.nodes[0].mnsync("next")
         self.nodes[0].masternode("start-all")
         # sync_masternodes(self.nodes)
+
+    def run_test (self):
         mn_info = self.nodes[0].masternodelist("status")
         assert(len(mn_info) == self.mn_count)
         for status in mn_info.values():
-            assert(status == 'ENABLED')  
-        #CHRIS
-        print(self.nodes[0].masternode("list"))
-        mn_network_count =  len(self.nodes[0].masternode("list"))
-        assert_equal(mn_network_count, self.mn_count)
-
-    def run_test (self):
-        print "Mining blocks..."
+            assert(status == 'ENABLED')
 
 if __name__ == '__main__':
     MasternodeTest ().main ()
