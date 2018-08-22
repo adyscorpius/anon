@@ -79,6 +79,7 @@ language: cpp
 compiler: gcc
 env:
   global:
+    - MAKEJOBS=-j3
     - CCACHE_SIZE=100M
     - CCACHE_TEMPDIR=/tmp/.ccache-temp
     - CCACHE_COMPRESS=1
@@ -95,9 +96,13 @@ matrix:
   fast_finish: true
   include:
     - compiler: ": bitcoind"
-      env: HOST=x86_64-unknown-linux-gnu PACKAGES="libtool bc python-zmq libboost-all-dev" PPA="ppa:chris-lea/zeromq" DEP_OPTS="NO_QT=1 NO_UPNP=1 DEBUG=1" RUN_TESTS=true GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports CPPFLAGS=-DDEBUG_LOCKORDER"  
-script:
-    - ./anonutil/build.sh
-    - qa/pull-tester/rpc-tests.sh --tracerpc
+      env: HOST=x86_64-unknown-linux-gnu PACKAGES="libtool bc python-zmq libboost-all-dev" PPA="ppa:chris-lea/zeromq" DEP_OPTS="NO_QT=1 NO_UPNP=1 DEBUG=1" RUN_TESTS=true GOAL="install" BITCOIN_CONFIG="--enable-zmq --enable-glibc-back-compat --enable-reduce-exports CPPFLAGS=-DDEBUG_LOCKORDER" MAKEJOBS=-j3
 before_script:    
     - ./anonutil/fetch-params.sh
+    - make $MAKEJOBS -C depends HOST=$HOST $DEP_OPTS
+script:
+    - BITCOIN_CONFIG_ALL="--prefix=$TRAVIS_BUILD_DIR/depends/$HOST --bindir=$OUTDIR/bin --libdir=$OUTDIR/lib"
+    - depends/$HOST/native/bin/ccache --max-size=$CCACHE_SIZE
+    - ./configure --cache-file=config.cache $BITCOIN_CONFIG_ALL $BITCOIN_CONFIG || ( cat config.log && false)
+    - ./anonutil/build.sh
+    - qa/pull-tester/rpc-tests.sh --tracerpc
