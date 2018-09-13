@@ -52,8 +52,8 @@ public:
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nStartTime = 1199145601; // January 1, 2008
         consensus.vDeployments[Consensus::DEPLOYMENT_TESTDUMMY].nTimeout = 1230767999; // December 31, 2008
 
-        consensus.nForkStartHeight = 2;
-        consensus.nForkHeightRange = 3;
+        consensus.nForkStartHeight = 3;
+        consensus.nForkHeightRange = 16737;
 
         pchMessageStart[0] = 0x83;
         pchMessageStart[1] = 0xD8;
@@ -97,10 +97,24 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        // TODO: setup a DNSSeed
-        vSeeds.push_back(CDNSSeedData("anon1-mainnet", "198.58.103.84"));
-        vSeeds.push_back(CDNSSeedData("anon2-mainnet", "50.116.27.226"));
-        vSeeds.push_back(CDNSSeedData("anon3-mainnet", "198.58.97.186"));
+        vSeeds.push_back(CDNSSeedData("anon0-mainnet", "149.28.224.182"));
+        vSeeds.push_back(CDNSSeedData("anon1-mainnet", "149.28.224.254"));
+        vSeeds.push_back(CDNSSeedData("anon2-mainnet", "108.61.159.183"));
+        vSeeds.push_back(CDNSSeedData("anon3-mainnet", "139.162.88.43"));
+        vSeeds.push_back(CDNSSeedData("anon4-mainnet", "139.162.96.172"));
+        vSeeds.push_back(CDNSSeedData("anon5-mainnet", "172.104.185.21"));
+        vSeeds.push_back(CDNSSeedData("anon6-mainnet", "172.104.175.135"));
+        vSeeds.push_back(CDNSSeedData("anon7-mainnet", "139.162.180.228"));
+        vSeeds.push_back(CDNSSeedData("anon8-mainnet", "139.162.184.130"));
+        vSeeds.push_back(CDNSSeedData("anon9-mainnet", "72.14.184.145"));
+        vSeeds.push_back(CDNSSeedData("anon10-mainnet", "198.58.96.134"));
+        vSeeds.push_back(CDNSSeedData("anon11-mainnet", "149.202.74.156 "));
+        vSeeds.push_back(CDNSSeedData("anon12-mainnet", "91.121.69.100"));
+        vSeeds.push_back(CDNSSeedData("anon13-mainnet", "45.76.241.37"));
+        vSeeds.push_back(CDNSSeedData("anon14-mainnet", "99.42.79.176"));
+        
+
+
 
         // guarantees the first 2 characters, when base58 encoded, are "An"
         base58Prefixes[PUBKEY_ADDRESS]     = {0x05,0x82};
@@ -140,10 +154,10 @@ public:
                             //   total number of tx / (checkpoint block height / (24 * 24))
         };
 
-        nForkStartHeight = 2;
-        nForkHeightRange = 3;
-        nZtransparentStartBlock = 2 + nForkStartHeight;
-        nZshieldedStartBlock = 3 + nForkStartHeight;
+        nForkStartHeight = 3;
+        nForkHeightRange = 16737;
+        nZtransparentStartBlock = 9893 + nForkStartHeight;
+        nZshieldedStartBlock = 10132 + nForkStartHeight;
 
         eh_epoch_1 = eh200_9;
         eh_epoch_2 = eh144_5;
@@ -196,12 +210,12 @@ public:
 
 
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
-        genesis.nTime = 1532704413;
+        genesis.nTime = 1536537600;
         genesis.nBits = 0x2007ffff;
-        genesis.nNonce = uint256S("0x0000000000000000000000000000000000000000000000000000000000000694");
-        genesis.nSolution = ParseHex("00405e6159d18c3534879797c5af4d84eb81c1937d6cdebf6b507f9eee5b21d75cf17d507df6acb0a77e76da7b8ccbf0a80e07ae333024a5989ccbd31e6be38aea6dd56701d9a6c9399ecd08a2cbbaa3fa50718a782cd023f84c9a7b7e4a2d92cdb6c950");
+        genesis.nNonce = uint256S("0x000000000000000000000000000000000000000000000000000000000000000d");
+        genesis.nSolution = ParseHex("00dd8d3ec1f1f3a07e3baf9a4106a790c880a96a92a76066a4046e9b1e3a995d383e7bf55593cfd9db6e4dcb06029d8db0030b22ce0627265c6d775fc2013409ef9441e7d54275b6bc67e92170c671d31b634a5559a41486bb28a79236e7c9038bf60c66");
         consensus.hashGenesisBlock = genesis.GetHash();
-        assert(consensus.hashGenesisBlock == uint256S("0x04cb00a7d6b71b20dd9e28673c5726bddc1eaafca27403509c86ed2750470d7d"));
+        assert(consensus.hashGenesisBlock == uint256S("0x0411c719ec9d99ce6188074ab174f499d38a8bb009eecec0602e8edd0e55dcfa"));
 
         vFixedSeeds.clear();
         vSeeds.clear();
