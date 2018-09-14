@@ -969,8 +969,8 @@ bool CMasternodePing::CheckAndUpdate(CMasternode *pmn, bool fFromNewBroadcast, i
     }
 
     pmn->Check(true); // force update, ignoring cache
-    if (!pmn->IsEnabled())
-        return false;
+    if (!pmn->IsEnabled() && !pmn->IsExpired() && !pmn->IsWatchdogExpired()) return false;
+
 
     LogPrint("masternode", "CMasternodePing::CheckAndUpdate -- Masternode ping acceepted and relayed, masternode=%s\n", vin.prevout.ToStringShort());
     Relay();
