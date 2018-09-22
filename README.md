@@ -69,7 +69,7 @@ Get dependencies:
 ```{r, engine='bash'}
 sudo apt-get install \
       build-essential pkg-config libc6-dev m4 g++-multilib \
-      autoconf libtool ncurses-dev unzip git python \
+      autoconf libtool libncurses5-dev unzip git python \
       zlib1g-dev wget bsdmainutils automake
 ```
 
